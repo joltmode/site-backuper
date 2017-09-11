@@ -2,7 +2,6 @@
     "require": {
         "symfony/console": "^3.2",
         "symfony/process": "^3.3",
-        "illuminate/database": "^5.2",
         "symfony/filesystem": "^3.3"
     },
     "autoload": {

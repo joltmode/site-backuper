@@ -293,10 +293,13 @@ class MakeBackupCommand extends Command
             fclose($cronHandle);
 
             $sshKeys = $userinfo['dir'] . '/.ssh/authorized_keys';
-            $backupKeys = implode(DIRECTORY_SEPARATOR, [$userBasePath, sprintf('%s.authorized_keys', $user)]);
 
-            if (!copy($sshKeys, $backupKeys)) {
-            	throw new \RuntimeException(sprintf('Could not copy authorized_keys of user (%s) to %s.', $user, $backupKeys));
+            if (file_exists($sshKeys)) {
+                $backupKeys = implode(DIRECTORY_SEPARATOR, [$userBasePath, sprintf('%s.authorized_keys', $user)]);
+
+                if (!copy($sshKeys, $backupKeys)) {
+                	throw new \RuntimeException(sprintf('Could not copy authorized_keys of user (%s) to %s.', $user, $backupKeys));
+                }
             }
         }
     }

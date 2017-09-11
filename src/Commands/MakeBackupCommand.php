@@ -275,14 +275,20 @@ class MakeBackupCommand extends Command
 
             $cronHandle = fopen($crontab, 'a');
 
-            $cronProcess = new Process(sprintf('crontab -u %s', $user));
+            $cronProcess = new Process(sprintf('crontab -u %s -l', $user));
             $cronProcess->setTimeout(null);
             $cronProcess->setIdleTimeout(null);
-            $cronProcess->mustRun(function ($type, $buffer) use ($cronHandle) {
-            	if (Process::OUT === $type) {
-            		fwrite($cronHandle, $buffer);
-            	}
-            });
+            try {
+                $cronProcess->mustRun(function ($type, $buffer) use ($cronHandle) {
+                	if (Process::OUT === $type) {
+                		fwrite($cronHandle, $buffer);
+                	}
+                });
+            } catch (ProcessFailedException $e) {
+                if (strpos($cronProcess->getErrorOutput(), 'no crontab') === false) {
+                    throw $e;
+                }
+            }
 
             fclose($cronHandle);
 

@@ -354,6 +354,11 @@ class MakeBackupCommand extends Command
         }
 
         $this->fileSystem->mkdir($target, $permissions);
+        
+        if (file_exists($source) && !is_dir($source)) {
+            copy($source, $target . DIRECTORY_SEPARATOR . basename($source));
+            return;
+        }
 
         $directoryIterator = new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
